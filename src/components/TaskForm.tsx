@@ -13,6 +13,8 @@ interface TaskFormProps {
   setDescription: (value: string) => void
   priority: TaskPriority
   setPriority: (value: TaskPriority) => void
+  assigneeId: string
+  setAssigneeId: (value: string) => void
   submitting: boolean
   error: string | null
   valid: boolean
@@ -23,6 +25,7 @@ export function TaskForm({
   title, setTitle,
   description, setDescription,
   priority, setPriority,
+  assigneeId, setAssigneeId,
   submitting, error, valid, handleSubmit,
 }: TaskFormProps) {
   return (
@@ -32,7 +35,7 @@ export function TaskForm({
       {error && <Alert severity="error">{error}</Alert>}
 
       <TextField
-        label="Título"
+        label="Título *"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         required
@@ -48,17 +51,28 @@ export function TaskForm({
         multiline
         rows={2}
       />
-      <TextField
-        select
-        label="Prioridad"
-        value={priority}
-        onChange={(e) => setPriority(e.target.value as TaskPriority)}
-        fullWidth
-      >
-        <MenuItem value="LOW">Baja (LOW)</MenuItem>
-        <MenuItem value="MED">Media (MED)</MenuItem>
-        <MenuItem value="HIGH">Alta (HIGH)</MenuItem>
-      </TextField>
+      
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+        <TextField
+          select
+          label="Prioridad"
+          value={priority}
+          onChange={(e) => setPriority(e.target.value as TaskPriority)}
+          fullWidth
+        >
+          <MenuItem value="LOW">Baja (LOW)</MenuItem>
+          <MenuItem value="MED">Media (MED)</MenuItem>
+          <MenuItem value="HIGH">Alta (HIGH)</MenuItem>
+        </TextField>
+
+        <TextField
+          label="ID del Responsable (Opcional)"
+          type="number"
+          value={assigneeId}
+          onChange={(e) => setAssigneeId(e.target.value)}
+          fullWidth
+        />
+      </Stack>
 
       <Button type="submit" variant="contained" disabled={!valid || submitting}>
         {submitting ? 'Creando…' : 'Crear tarea'}

@@ -11,6 +11,8 @@ export function useTaskForm({ projectId, onSuccess }: UseTaskFormOptions) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [priority, setPriority] = useState<TaskPriority>('LOW')
+  const [assigneeId, setAssigneeId] = useState<string>('') // NUEVO ESTADO
+  
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -20,6 +22,7 @@ export function useTaskForm({ projectId, onSuccess }: UseTaskFormOptions) {
     setTitle('')
     setDescription('')
     setPriority('LOW')
+    setAssigneeId('') // LIMPIAR AL CREAR
     setError(null)
   }
 
@@ -35,6 +38,8 @@ export function useTaskForm({ projectId, onSuccess }: UseTaskFormOptions) {
         title: title.trim(),
         description: description.trim() || undefined,
         priority,
+        // MANDARLO COMO NÚMERO O INDEFINIDO
+        assigneeId: assigneeId.trim() !== '' ? Number(assigneeId) : undefined,
       })
       reset()
       onSuccess?.()
@@ -49,6 +54,7 @@ export function useTaskForm({ projectId, onSuccess }: UseTaskFormOptions) {
     title, setTitle,
     description, setDescription,
     priority, setPriority,
+    assigneeId, setAssigneeId,
     submitting,
     error,
     valid,

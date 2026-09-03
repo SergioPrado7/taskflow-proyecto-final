@@ -12,7 +12,8 @@ export function useTaskActions({ task, onSuccess }: UseTaskActionsOptions) {
   const [title, setTitle] = useState(task.title)
   const [description, setDescription] = useState(task.description ?? '')
   const [priority, setPriority] = useState<TaskPriority>(task.priority)
-  
+  const [assigneeId, setAssigneeId] = useState<string>(task.assigneeId ? String(task.assigneeId) : '')
+
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [statusUpdating, setStatusUpdating] = useState(false)
@@ -44,6 +45,7 @@ export function useTaskActions({ task, onSuccess }: UseTaskActionsOptions) {
         title: title.trim(),
         description: description.trim() || undefined,
         priority,
+        assigneeId: assigneeId.trim() !== '' ? Number(assigneeId) : undefined,
       })
       setEditing(false)
       onSuccess?.()
@@ -85,7 +87,7 @@ export function useTaskActions({ task, onSuccess }: UseTaskActionsOptions) {
   }
 
   return {
-    editing, title, setTitle, description, setDescription, priority, setPriority,
+    editing, title, setTitle, description, setDescription, priority, setPriority, assigneeId, setAssigneeId,
     saving, deleting, statusUpdating, error, valid, busy,
     startEditing, cancelEditing, handleUpdate, handleDelete, handleChangeStatus
   }

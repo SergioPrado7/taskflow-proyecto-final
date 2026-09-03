@@ -1,8 +1,10 @@
 import LogoutIcon from '@mui/icons-material/Logout'
+import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
+import Container from '@mui/material/Container'
 import Paper from '@mui/material/Paper'
-import Stack from '@mui/material/Stack'
+import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import { useNavigate } from 'react-router-dom'
 import { ProjectForm } from '../components/ProjectForm'
@@ -23,39 +25,31 @@ export function DashboardPage() {
   }
 
   return (
-    <Box maxWidth={720} mx="auto" mt={6} px={2}>
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={3}
-      >
-        <Box>
-          <Typography variant="h4" gutterBottom>
-            Dashboard
+    <Box sx={{ flexGrow: 1, bgcolor: 'grey.100', minHeight: '100vh', pb: 6 }}>
+      {/* Navbar */}
+      <AppBar position="static" color="primary" elevation={1}>
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
+            TaskFlow
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Fase 5 — crear, listar, editar y eliminar proyectos.
-          </Typography>
-        </Box>
+          <Button color="inherit" startIcon={<LogoutIcon />} onClick={handleLogout}>
+            Salir
+          </Button>
+        </Toolbar>
+      </AppBar>
 
-        <Button startIcon={<LogoutIcon />} onClick={handleLogout}>
-          Cerrar sesión
-        </Button>
-      </Stack>
+      {/* Contenido Principal */}
+      <Container maxWidth="md" sx={{ mt: 4 }}>
+        <Typography variant="h5" gutterBottom color="text.primary" fontWeight="500">
+          Mis Proyectos
+        </Typography>
 
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <ProjectForm {...projectForm} />
-      </Paper>
+        <Paper elevation={2} sx={{ p: 3, mb: 4, borderRadius: 2 }}>
+          <ProjectForm {...projectForm} />
+        </Paper>
 
-      <Paper sx={{ p: 3 }}>
-        <ProjectList
-          projects={projects}
-          loading={loading}
-          error={error}
-          onChanged={refetch}
-        />
-      </Paper>
+        <ProjectList projects={projects} loading={loading} error={error} onChanged={refetch} />
+      </Container>
     </Box>
   )
 }
