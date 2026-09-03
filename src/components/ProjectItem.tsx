@@ -10,6 +10,7 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import { useProjectActions } from '../hooks/useProjectActions'
 import type { Project } from '../types'
+import { useNavigate } from 'react-router-dom'
 
 interface ProjectItemProps {
   project: Project
@@ -17,7 +18,8 @@ interface ProjectItemProps {
 }
 
 export function ProjectItem({ project, onChanged }: ProjectItemProps) {
-  const actions = useProjectActions({
+    const navigate = useNavigate()
+    const actions = useProjectActions({
     project,
     onSuccess: onChanged,
   })
@@ -127,6 +129,14 @@ export function ProjectItem({ project, onChanged }: ProjectItemProps) {
               disabled={actions.busy}
             >
               {actions.deleting ? 'Eliminando…' : 'Eliminar'}
+            </Button>
+
+            <Button
+                size="small"
+                variant="outlined"
+                onClick={() => navigate(`/projects/${project.id}/tasks`)}
+            >
+                Ver Tareas
             </Button>
           </Stack>
         </Stack>
