@@ -1,19 +1,23 @@
 import Alert from '@mui/material/Alert'
 import CircularProgress from '@mui/material/CircularProgress'
-import List from '@mui/material/List'
-import ListItem from '@mui/material/ListItem'
-import ListItemText from '@mui/material/ListItemText'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import type { Project } from '../types'
+import { ProjectItem } from './ProjectItem'
 
 interface ProjectListProps {
   projects: Project[]
   loading: boolean
   error: string | null
+  onChanged: () => void
 }
 
-export function ProjectList({ projects, loading, error }: ProjectListProps) {
+export function ProjectList({
+  projects,
+  loading,
+  error,
+  onChanged,
+}: ProjectListProps) {
   if (loading) {
     return (
       <Stack alignItems="center" py={4}>
@@ -31,20 +35,18 @@ export function ProjectList({ projects, loading, error }: ProjectListProps) {
   }
 
   return (
-    <>
-      <Typography variant="subtitle1" gutterBottom>
+    <Stack spacing={2}>
+      <Typography variant="subtitle1">
         Proyectos ({projects.length})
       </Typography>
-      <List>
-        {projects.map((project) => (
-          <ListItem key={project.id} divider>
-            <ListItemText
-              primary={project.name}
-              secondary={project.description || `ID ${project.id}`}
-            />
-          </ListItem>
-        ))}
-      </List>
-    </>
+
+      {projects.map((project) => (
+        <ProjectItem
+          key={project.id}
+          project={project}
+          onChanged={onChanged}
+        />
+      ))}
+    </Stack>
   )
 }
