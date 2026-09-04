@@ -1,8 +1,6 @@
 import CloseIcon from '@mui/icons-material/Close'
-import DeleteIcon from '@mui/icons-material/Delete'
-import EditIcon from '@mui/icons-material/Edit'
-import SaveIcon from '@mui/icons-material/Save'
 import ListAltIcon from '@mui/icons-material/ListAlt'
+import SaveIcon from '@mui/icons-material/Save'
 import Alert from '@mui/material/Alert'
 import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
@@ -32,20 +30,20 @@ export function ProjectItem({ project, onChanged }: ProjectItemProps) {
 
   if (actions.editing) {
     return (
-      <Card elevation={3} sx={{ borderRadius: 2, mb: 2 }} component="form" onSubmit={actions.handleUpdate}>
+      <Card elevation={1} sx={{ borderRadius: 2, mb: 2, border: '1px solid', borderColor: 'grey.300' }} component="form" onSubmit={actions.handleUpdate}>
         <CardContent>
           <Stack spacing={2}>
-            <Typography variant="subtitle1" fontWeight="bold">Editar proyecto #{project.id}</Typography>
+            <Typography variant="subtitle1" fontWeight="bold">Editar proyecto</Typography>
             {actions.error && <Alert severity="error">{actions.error}</Alert>}
-            <TextField label="Nombre" value={actions.name} onChange={(e) => actions.setName(e.target.value)} required fullWidth inputProps={{ minLength: 3, maxLength: 80 }} />
-            <TextField label="Descripción" value={actions.description} onChange={(e) => actions.setDescription(e.target.value)} fullWidth multiline rows={2} />
+            <TextField label="Nombre" value={actions.name} onChange={(e) => actions.setName(e.target.value)} required fullWidth inputProps={{ minLength: 3, maxLength: 80 }} size="small" />
+            <TextField label="Descripción" value={actions.description} onChange={(e) => actions.setDescription(e.target.value)} fullWidth multiline rows={2} size="small" />
           </Stack>
         </CardContent>
-        <CardActions sx={{ px: 2, pb: 2 }}>
-          <Button type="submit" variant="contained" startIcon={<SaveIcon />} disabled={!actions.valid || actions.busy}>
+        <CardActions sx={{ px: 2, pb: 2, pt: 0 }}>
+          <Button type="submit" variant="contained" size="small" startIcon={<SaveIcon />} disabled={!actions.valid || actions.busy} disableElevation>
             {actions.saving ? 'Guardando…' : 'Guardar'}
           </Button>
-          <Button startIcon={<CloseIcon />} onClick={actions.cancelEditing} disabled={actions.busy}>
+          <Button startIcon={<CloseIcon />} size="small" onClick={actions.cancelEditing} disabled={actions.busy}>
             Cancelar
           </Button>
         </CardActions>
@@ -54,29 +52,54 @@ export function ProjectItem({ project, onChanged }: ProjectItemProps) {
   }
 
   return (
-    <Card elevation={2} sx={{ borderRadius: 2, transition: '0.2s', '&:hover': { elevation: 4 } }}>
-      <CardContent>
+    <Card 
+      elevation={0} 
+      sx={{ 
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        borderRadius: 2, 
+        border: '1px solid',
+        borderColor: 'grey.300',
+        transition: 'all 0.3s ease-in-out',
+        '&:hover': { 
+          borderColor: 'primary.main', 
+          boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)',
+          transform: 'translateY(-6px)'
+        } 
+      }}
+    >
+      <CardContent sx={{ flexGrow: 1 }}>
         {actions.error && <Alert severity="error" sx={{ mb: 2 }}>{actions.error}</Alert>}
-        <Typography variant="h6" component="div" fontWeight="500">
+        
+        <Typography variant="h6" component="div" fontWeight="600" color="text.primary">
           {project.name}
         </Typography>
+        
         <Typography variant="body2" color="text.secondary" sx={{ mt: 1, minHeight: 40 }}>
           {project.description || 'Sin descripción asignada.'}
         </Typography>
+        
         <Typography variant="caption" display="block" color="text.disabled" sx={{ mt: 2 }}>
           ID: {project.id} | Creado: {project.createdAt}
         </Typography>
       </CardContent>
       
-      <CardActions sx={{ justifyContent: 'space-between', px: 2, pb: 2, bgcolor: 'grey.50' }}>
-        <Button size="small" variant="contained" color="primary" startIcon={<ListAltIcon />} onClick={() => navigate(`/projects/${project.id}/tasks`)}>
-          Ver Tareas
+      <CardActions sx={{ justifyContent: 'space-between', px: 2, pb: 2, pt: 0 }}>
+        <Button 
+          size="small" 
+          variant="contained" 
+          disableElevation
+          startIcon={<ListAltIcon />} 
+          onClick={() => navigate(`/projects/${project.id}/tasks`, { state: { projectName: project.name } })}
+        >
+          Tareas
         </Button>
         <Stack direction="row" spacing={1}>
-          <Button size="small" variant="outlined" startIcon={<EditIcon />} onClick={actions.startEditing} disabled={actions.busy}>
+          <Button size="small" variant="outlined" onClick={actions.startEditing} disabled={actions.busy}>
             Editar
           </Button>
-          <Button size="small" color="error" startIcon={<DeleteIcon />} onClick={confirmDelete} disabled={actions.busy}>
+          <Button size="small" variant="outlined" color="error" onClick={confirmDelete} disabled={actions.busy}>
             Eliminar
           </Button>
         </Stack>

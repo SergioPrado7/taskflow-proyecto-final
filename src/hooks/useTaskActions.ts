@@ -13,6 +13,7 @@ export function useTaskActions({ task, onSuccess }: UseTaskActionsOptions) {
   const [description, setDescription] = useState(task.description ?? '')
   const [priority, setPriority] = useState<TaskPriority>(task.priority)
   const [assigneeId, setAssigneeId] = useState<string>(task.assigneeId ? String(task.assigneeId) : '')
+  const [dueDate, setDueDate] = useState(task.dueDate || '')
 
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
@@ -26,6 +27,8 @@ export function useTaskActions({ task, onSuccess }: UseTaskActionsOptions) {
     setTitle(task.title)
     setDescription(task.description ?? '')
     setPriority(task.priority)
+    setAssigneeId(task.assigneeId?.toString() || '')
+    setDueDate(task.dueDate || '')
     setError(null)
     setEditing(true)
   }
@@ -46,6 +49,7 @@ export function useTaskActions({ task, onSuccess }: UseTaskActionsOptions) {
         description: description.trim() || undefined,
         priority,
         assigneeId: assigneeId.trim() !== '' ? Number(assigneeId) : undefined,
+        dueDate: dueDate.trim() !== '' ? dueDate : undefined, // <-- ¡AQUÍ ES DONDE FALTABA, PAPS!
       })
       setEditing(false)
       onSuccess?.()
@@ -89,6 +93,6 @@ export function useTaskActions({ task, onSuccess }: UseTaskActionsOptions) {
   return {
     editing, title, setTitle, description, setDescription, priority, setPriority, assigneeId, setAssigneeId,
     saving, deleting, statusUpdating, error, valid, busy,
-    startEditing, cancelEditing, handleUpdate, handleDelete, handleChangeStatus
+    startEditing, cancelEditing, handleUpdate, handleDelete, handleChangeStatus, dueDate, setDueDate
   }
 }

@@ -15,6 +15,8 @@ interface TaskFormProps {
   setPriority: (value: TaskPriority) => void
   assigneeId: string
   setAssigneeId: (value: string) => void
+  dueDate: string // <-- Agregado a las props
+  setDueDate: (value: string) => void // <-- Agregado a las props
   submitting: boolean
   error: string | null
   valid: boolean
@@ -26,6 +28,7 @@ export function TaskForm({
   description, setDescription,
   priority, setPriority,
   assigneeId, setAssigneeId,
+  dueDate, setDueDate, // <-- Extraído de las props
   submitting, error, valid, handleSubmit,
 }: TaskFormProps) {
   return (
@@ -70,6 +73,16 @@ export function TaskForm({
           type="number"
           value={assigneeId}
           onChange={(e) => setAssigneeId(e.target.value)}
+          fullWidth
+        />
+
+        {/* <-- NUEVO INPUT DE FECHA --> */}
+        <TextField
+          type="date"
+          label="Fecha límite"
+          InputLabelProps={{ shrink: true }} // Necesario para que el label no se encime con la fecha
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
           fullWidth
         />
       </Stack>
