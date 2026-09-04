@@ -49,7 +49,7 @@ export function useTaskActions({ task, onSuccess }: UseTaskActionsOptions) {
         description: description.trim() || undefined,
         priority,
         assigneeId: assigneeId.trim() !== '' ? Number(assigneeId) : undefined,
-        dueDate: dueDate.trim() !== '' ? dueDate : undefined, // <-- ¡AQUÍ ES DONDE FALTABA, PAPS!
+        dueDate: dueDate.trim() !== '' ? dueDate : undefined,
       })
       setEditing(false)
       onSuccess?.()
@@ -61,15 +61,17 @@ export function useTaskActions({ task, onSuccess }: UseTaskActionsOptions) {
   }
 
   async function handleDelete() {
-    if (busy) return
+    if (busy) return false
     setDeleting(true)
     setError(null)
 
     try {
       await deleteTask(task.id)
       onSuccess?.()
+      return true
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al eliminar la tarea')
+      return false
     } finally {
       setDeleting(false)
     }

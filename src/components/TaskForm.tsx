@@ -15,8 +15,8 @@ interface TaskFormProps {
   setPriority: (value: TaskPriority) => void
   assigneeId: string
   setAssigneeId: (value: string) => void
-  dueDate: string // <-- Agregado a las props
-  setDueDate: (value: string) => void // <-- Agregado a las props
+  dueDate: string
+  setDueDate: (value: string) => void
   submitting: boolean
   error: string | null
   valid: boolean

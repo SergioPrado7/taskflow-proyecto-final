@@ -9,9 +9,11 @@ import CardContent from '@mui/material/CardContent'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useProjectActions } from '../hooks/useProjectActions'
 import type { Project } from '../types'
+import { ConfirmDialog } from './ConfirmDialog'
 
 interface ProjectItemProps {
   project: Project
@@ -21,11 +23,10 @@ interface ProjectItemProps {
 export function ProjectItem({ project, onChanged }: ProjectItemProps) {
   const actions = useProjectActions({ project, onSuccess: onChanged })
   const navigate = useNavigate()
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
-  function confirmDelete() {
-    if (window.confirm(`¿Eliminar el proyecto "${project.name}"? También se eliminarán sus tareas.`)) {
-      void actions.handleDelete()
-    }
+  async function confirmDelete() {
+    if (await actions.handleDelete()) setDeleteDialogOpen(false)
   }
 
   if (actions.editing) {
@@ -99,11 +100,20 @@ export function ProjectItem({ project, onChanged }: ProjectItemProps) {
           <Button size="small" variant="outlined" onClick={actions.startEditing} disabled={actions.busy}>
             Editar
           </Button>
-          <Button size="small" variant="outlined" color="error" onClick={confirmDelete} disabled={actions.busy}>
+          <Button size="small" variant="outlined" color="error" onClick={() => setDeleteDialogOpen(true)} disabled={actions.busy}>
             Eliminar
           </Button>
         </Stack>
       </CardActions>
+      <ConfirmDialog
+        open={deleteDialogOpen}
+        title="Eliminar proyecto"
+        description={`¿Eliminar el proyecto “${project.name}” y todas sus tareas? Esta acción no se puede deshacer.`}
+        busy={actions.deleting}
+        error={actions.error}
+        onCancel={() => setDeleteDialogOpen(false)}
+        onConfirm={() => void confirmDelete()}
+      />
     </Card>
   )
 }

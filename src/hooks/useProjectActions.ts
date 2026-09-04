@@ -59,7 +59,7 @@ export function useProjectActions({
   }
 
   async function handleDelete() {
-    if (busy) return
+    if (busy) return false
 
     setDeleting(true)
     setError(null)
@@ -67,10 +67,12 @@ export function useProjectActions({
     try {
       await deleteProject(project.id)
       onSuccess?.()
+      return true
     } catch (err: unknown) {
       setError(
         err instanceof Error ? err.message : 'Error al eliminar el proyecto',
       )
+      return false
     } finally {
       setDeleting(false)
     }

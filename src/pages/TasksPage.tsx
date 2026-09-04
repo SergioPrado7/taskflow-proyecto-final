@@ -6,24 +6,23 @@ import {
   Stack, Toolbar, Typography
 } from '@mui/material'
 import { useState } from 'react'
-import { useNavigate, useParams, useLocation } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { TaskForm } from '../components/TaskForm'
 import { TaskList } from '../components/TaskList'
 import { useAuth } from '../hooks/useAuth'
 import { useTaskForm } from '../hooks/useTaskForm'
 import { useTasks } from '../hooks/useTasks'
+import { useProject } from '../hooks/useProject'
 
 export function TasksPage() {
   const { projectId } = useParams<{ projectId: string }>()
   const navigate = useNavigate()
-  const location = useLocation()
   const { logout } = useAuth()
   const [showForm, setShowForm] = useState(false)
   
   const id = Number(projectId)
   const { tasks, loading, error, refetch } = useTasks(id)
-
-  const projectName = location.state?.projectName || `Proyecto #${id}`
+  const { project, loading: projectLoading, error: projectError } = useProject(id)
 
   const taskForm = useTaskForm({ 
     projectId: id, 
@@ -69,7 +68,7 @@ export function TasksPage() {
                 Volver
               </Button>
               <Typography variant="h4" color="text.primary" fontWeight="bold">
-                {projectName}
+                {projectLoading ? 'Cargando proyecto…' : project?.name ?? `Proyecto #${id}`}
               </Typography>
             </Stack>
 
@@ -83,6 +82,10 @@ export function TasksPage() {
             </Button>
           </Stack>
         </Box>
+
+        {projectError && (
+          <Typography color="error" sx={{ mb: 3 }}>{projectError}</Typography>
+        )}
 
         {showForm && (
           <Paper elevation={1} sx={{ p: 3, mb: 4, borderRadius: 2, border: '1px solid', borderColor: 'grey.300' }}>

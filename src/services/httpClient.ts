@@ -2,6 +2,8 @@ import axios from 'axios'
 import { getApiBaseUrl } from '../config/apiUrl'
 import { TOKEN_KEY } from '../types'
 
+export const AUTH_UNAUTHORIZED_EVENT = 'taskflow:unauthorized'
+
 export const httpClient = axios.create({
   headers: { 'Content-Type': 'application/json' },
 })
@@ -14,6 +16,17 @@ httpClient.interceptors.request.use((config) => {
   }
   return config
 })
+
+httpClient.interceptors.response.use(
+  (response) => response,
+  (error: unknown) => {
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
+      localStorage.removeItem(TOKEN_KEY)
+      window.dispatchEvent(new Event(AUTH_UNAUTHORIZED_EVENT))
+    }
+    return Promise.reject(error)
+  },
+)
 
 export function getApiErrorMessage(err: unknown): string {
   if (axios.isAxiosError(err)) {

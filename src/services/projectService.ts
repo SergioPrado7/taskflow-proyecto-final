@@ -6,6 +6,11 @@ export async function getProjects(): Promise<Project[]> {
   return data
 }
 
+export async function getProject(id: number): Promise<Project> {
+  const { data } = await httpClient.get<Project>(`/projects/${id}`)
+  return data
+}
+
 export async function createProject(body: NewProject): Promise<Project> {
   const { data } = await httpClient.post<Project>('/projects', body)
   return data

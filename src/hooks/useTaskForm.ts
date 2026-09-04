@@ -24,7 +24,7 @@ export function useTaskForm({ projectId, onSuccess }: UseTaskFormOptions) {
     setDescription('')
     setPriority('LOW')
     setAssigneeId('')
-    setDueDate('') // <-- Agregado para que se limpie la fecha al crear
+    setDueDate('')
     setError(null)
   }
 
@@ -41,16 +41,13 @@ export function useTaskForm({ projectId, onSuccess }: UseTaskFormOptions) {
         description: description.trim() || undefined,
         priority,
         assigneeId: assigneeId.trim() !== '' ? Number(assigneeId) : undefined,
-        // Si el usuario no elige fecha, mandamos explícitamente null en lugar de undefined
         dueDate: dueDate.trim() !== '' ? dueDate : undefined,
       })
       reset()
       onSuccess?.()
     } catch (err: any) {
-      // MAGIA: Sacamos el mensaje de error REAL que manda tu backend en Spring Boot
       const backendError = err.response?.data?.message || err.response?.data?.error || err.message;
       
-      // Si el backend manda un array de errores de validación, lo convertimos a texto
       const errorText = typeof err.response?.data === 'object' ? JSON.stringify(err.response.data) : backendError;
       
       setError(`Rechazado por el backend: ${errorText}`);

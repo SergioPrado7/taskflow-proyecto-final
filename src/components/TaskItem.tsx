@@ -10,8 +10,10 @@ import MenuItem from '@mui/material/MenuItem'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
+import { useState } from 'react'
 import { useTaskActions } from '../hooks/useTaskActions'
-import type { Task } from '../types'
+import type { Task, TaskPriority, TaskStatus } from '../types'
+import { ConfirmDialog } from './ConfirmDialog'
 
 interface TaskItemProps {
   task: Task
@@ -20,11 +22,10 @@ interface TaskItemProps {
 
 export function TaskItem({ task, onChanged }: TaskItemProps) {
   const actions = useTaskActions({ task, onSuccess: onChanged })
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
-  function confirmDelete() {
-    if (window.confirm(`¿Eliminar la tarea "${task.title}"?`)) {
-      void actions.handleDelete()
-    }
+  async function confirmDelete() {
+    if (await actions.handleDelete()) setDeleteDialogOpen(false)
   }
 
   if (actions.editing) {
@@ -38,7 +39,7 @@ export function TaskItem({ task, onChanged }: TaskItemProps) {
             <TextField label="Descripción" value={actions.description} onChange={(e) => actions.setDescription(e.target.value)} fullWidth multiline rows={2} size="small" />
             
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-              <TextField select label="Prioridad" value={actions.priority} onChange={(e) => actions.setPriority(e.target.value as any)} fullWidth size="small">
+              <TextField select label="Prioridad" value={actions.priority} onChange={(e) => actions.setPriority(e.target.value as TaskPriority)} fullWidth size="small">
                 <MenuItem value="LOW">Baja</MenuItem>
                 <MenuItem value="MED">Media</MenuItem>
                 <MenuItem value="HIGH">Alta</MenuItem>
@@ -132,7 +133,7 @@ export function TaskItem({ task, onChanged }: TaskItemProps) {
           size="small"
           label="Estado"
           value={task.status}
-          onChange={(e) => actions.handleChangeStatus(e.target.value as any)}
+          onChange={(e) => actions.handleChangeStatus(e.target.value as TaskStatus)}
           disabled={actions.busy}
           sx={{ minWidth: 120 }}
           InputProps={{ sx: { height: 32 } }} 
@@ -146,11 +147,20 @@ export function TaskItem({ task, onChanged }: TaskItemProps) {
           <Button size="small" variant="outlined" onClick={actions.startEditing} disabled={actions.busy} sx={{ height: 32 }}>
             Editar
           </Button>
-          <Button size="small" variant="outlined" color="error" onClick={confirmDelete} disabled={actions.busy} sx={{ height: 32 }}>
+          <Button size="small" variant="outlined" color="error" onClick={() => setDeleteDialogOpen(true)} disabled={actions.busy} sx={{ height: 32 }}>
             Eliminar
           </Button>
         </Stack>
       </CardActions>
+      <ConfirmDialog
+        open={deleteDialogOpen}
+        title="Eliminar tarea"
+        description={`¿Eliminar la tarea “${task.title}”? Esta acción no se puede deshacer.`}
+        busy={actions.deleting}
+        error={actions.error}
+        onCancel={() => setDeleteDialogOpen(false)}
+        onConfirm={() => void confirmDelete()}
+      />
     </Card>
   )
 }

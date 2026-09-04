@@ -1,6 +1,6 @@
-import { createContext, useState, type ReactNode } from 'react'
+import { createContext, useEffect, useState, type ReactNode } from 'react'
 import * as authService from '../services/authService'
-import { getApiErrorMessage } from '../services/httpClient'
+import { AUTH_UNAUTHORIZED_EVENT, getApiErrorMessage } from '../services/httpClient'
 
 interface LoginResult {
   success: boolean
@@ -17,6 +17,12 @@ export const AuthContext = createContext<AuthContextValue | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(() => Boolean(authService.getToken()))
+
+  useEffect(() => {
+    const handleUnauthorized = () => setIsAuthenticated(false)
+    window.addEventListener(AUTH_UNAUTHORIZED_EVENT, handleUnauthorized)
+    return () => window.removeEventListener(AUTH_UNAUTHORIZED_EVENT, handleUnauthorized)
+  }, [])
 
   async function handleLogin(username: string, password: string): Promise<LoginResult> {
     try {
