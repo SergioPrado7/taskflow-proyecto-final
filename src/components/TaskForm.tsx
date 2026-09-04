@@ -28,7 +28,7 @@ export function TaskForm({
   description, setDescription,
   priority, setPriority,
   assigneeId, setAssigneeId,
-  dueDate, setDueDate, // <-- Extraído de las props
+  dueDate, setDueDate,
   submitting, error, valid, handleSubmit,
 }: TaskFormProps) {
   return (
@@ -76,11 +76,10 @@ export function TaskForm({
           fullWidth
         />
 
-        {/* <-- NUEVO INPUT DE FECHA --> */}
         <TextField
           type="date"
           label="Fecha límite"
-          InputLabelProps={{ shrink: true }} // Necesario para que el label no se encime con la fecha
+          InputLabelProps={{ shrink: true }}
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
           fullWidth
